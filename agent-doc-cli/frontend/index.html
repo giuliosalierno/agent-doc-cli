@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocAI — Document Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Scanline overlay for atmosphere -->
+    <div class="scanline-overlay"></div>
+
+    <!-- Top bar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="logo">
+                <span class="logo-bracket">[</span><span class="logo-text">DocAI</span><span class="logo-bracket">]</span>
+            </div>
+            <div class="topbar-divider"></div>
+            <span class="topbar-label">workspace</span>
+        </div>
+        <div class="topbar-center">
+            <div class="connection-status" id="connection-status">
+                <span class="status-dot"></span>
+                <span class="status-text">ready</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <input type="file" id="file-upload-input" hidden accept=".pdf,.docx,.doc,.md,.txt,.html,.tex,.latex,.csv,.json">
+            <button class="topbar-btn upload-btn" id="upload-btn" title="Upload file (PDF, DOCX, TXT, MD...)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span class="btn-label">Upload</span>
+            </button>
+            <button class="topbar-btn" id="refresh-btn" title="Refresh workspace">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main layout -->
+    <main class="editor-layout">
+        <!-- Left: Document panel -->
+        <section class="panel panel-editor" id="panel-editor">
+            <!-- File tabs -->
+            <div class="file-tabs" id="file-tabs">
+                <div class="file-tab empty-tab active">
+                    <span class="tab-icon">&#9671;</span>
+                    <span>no file</span>
+                </div>
+            </div>
+
+            <!-- Editor content -->
+            <div class="editor-content" id="editor-content">
+                <div class="editor-empty-state" id="editor-empty">
+                    <div class="empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/>
+                        </svg>
+                    </div>
+                    <p class="empty-title">No document open</p>
+                    <p class="empty-subtitle">Create or open a file to start editing</p>
+                    <p class="empty-hint">Try: "Create a file called notes.md with some content"</p>
+                </div>
+                <div class="editor-document" id="editor-document" style="display:none;">
+                    <div class="line-numbers" id="line-numbers"></div>
+                    <div class="document-body" id="document-body"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resize handle -->
+        <div class="resize-handle" id="resize-handle">
+            <div class="handle-grip"></div>
+        </div>
+
+        <!-- Right: Chat panel -->
+        <section class="panel panel-chat" id="panel-chat">
+            <div class="chat-header">
+                <span class="chat-header-label">assistant</span>
+                <span class="chat-header-model">gemini</span>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="chat-welcome">
+                    <div class="welcome-badge">AI</div>
+                    <p class="welcome-text">I'm your document assistant. I can create, edit, search, and export documents in your workspace.</p>
+                    <div class="welcome-suggestions">
+                        <button class="suggestion-chip" data-message="List all files in the workspace">list files</button>
+                        <button class="suggestion-chip" data-message="Create a file called notes.md with a heading '# My Notes' and some placeholder content">create a file</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom input bar -->
+    <footer class="input-bar">
+        <div class="input-wrapper">
+            <span class="input-prompt">&gt;</span>
+            <input type="text" id="user-input" placeholder="Ask the agent to create, edit, or search documents..." autocomplete="off" spellcheck="false">
+            <button class="send-btn" id="send-btn" title="Send message">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+            </button>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
